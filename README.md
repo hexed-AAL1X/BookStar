@@ -3,10 +3,10 @@
 <img src="https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif" width="100%">
 
 <p align="center">
-  <img alt="GitHub Repo contributors" src="https://img.shields.io/github/contributors/hexed-AAL1X/BookStar-Front?style=for-the-badge">&nbsp;
-  <img alt="GitHub Repo forks" src="https://img.shields.io/github/forks/hexed-AAL1X/BookStar-Front?style=for-the-badge">&nbsp;
-  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/hexed-AAL1X/BookStar-Front?style=for-the-badge">&nbsp;
-  <img alt="GitHub Repo issues" src="https://img.shields.io/github/issues/hexed-AAL1X/BookStar-Front?style=for-the-badge">&nbsp;
+  <img alt="GitHub Repo contributors" src="https://img.shields.io/github/contributors/hexed-AAL1X/BookStar?style=for-the-badge">&nbsp;
+  <img alt="GitHub Repo forks" src="https://img.shields.io/github/forks/hexed-AAL1X/BookStar?style=for-the-badge">&nbsp;
+  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/hexed-AAL1X/BookStar?style=for-the-badge">&nbsp;
+  <img alt="GitHub Repo issues" src="https://img.shields.io/github/issues/hexed-AAL1X/BookStar?style=for-the-badge">&nbsp;
 </p>
 
 <br>
@@ -17,13 +17,13 @@
   <p align="center">
     Frontend web (Angular) para biblioteca digital: libros, pedidos, posts y usuarios.
     <br>
-    <a href="https://github.com/hexed-AAL1X/BookStar-Front"><strong>Explorar repositorio »</strong></a>
+    <a href="https://github.com/hexed-AAL1X/BookStar"><strong>Explorar repositorio »</strong></a>
     <br><br>
-    <a href="https://github.com/hexed-AAL1X/BookStar-Front">Ver código</a>
+    <a href="https://github.com/hexed-AAL1X/BookStar">Ver código</a>
     ·
-    <a href="https://github.com/hexed-AAL1X/BookStar-Front/issues/new?labels=bug">Reportar bug</a>
+    <a href="https://github.com/hexed-AAL1X/BookStar/issues/new?labels=bug">Reportar bug</a>
     ·
-    <a href="https://github.com/hexed-AAL1X/BookStar-Front/issues/new?labels=enhancement">Pedir feature</a>
+    <a href="https://github.com/hexed-AAL1X/BookStar/issues/new?labels=enhancement">Pedir feature</a>
   </p>
 </div>
 
