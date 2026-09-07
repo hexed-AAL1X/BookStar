@@ -1,0 +1,129 @@
+<div class="posts-bg">
+  <div class="posts-container">
+    <!-- Header de la página -->
+    <div class="posts-header">
+      <div class="header-content">
+        <h1 class="posts-title">Comunidad <span>BookStar</span></h1>
+        <p class="posts-subtitle">Comparte tus reseñas y descubre nuevos libros</p>
+      </div>
+      <button class="new-post-btn" (click)="openNewPostForm()">+ Crear Post</button>
+    </div>
+
+    <!-- Formulario de Nuevo Post -->
+    <div class="new-post-form" *ngIf="showNewPostForm">
+      <div class="form-header">
+        <h3>Crear nuevo post</h3>
+        <button class="close-btn" (click)="closeNewPostForm()">×</button>
+      </div>
+      <div class="form-content">
+        <input type="text" placeholder="Título del post..." class="post-title-input" [(ngModel)]="newPostTitle">
+        <textarea placeholder="Comparte tus pensamientos sobre el libro..." class="post-content-input" [(ngModel)]="newPostContent"></textarea>
+        <div class="form-actions">
+          <select class="book-select" [(ngModel)]="newPostBookId">
+            <option value="">Seleccionar libro (opcional)</option>
+            <option *ngFor="let book of books" [value]="book._id">{{ book.title }}</option>
+          </select>
+          <button class="publish-btn" [disabled]="creatingPost || !newPostTitle.trim() || !newPostContent.trim()" (click)="createPost()">
+            {{ creatingPost ? 'Publicando...' : 'Publicar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feed de Posts -->
+    <div class="posts-feed">
+      <div *ngIf="loading" class="loading-container">
+        <p>Cargando posts...</p>
+      </div>
+      <div *ngIf="!loading && posts.length === 0" class="no-posts">
+        <p>No hay posts aún.</p>
+      </div>
+      <div *ngFor="let post of paginatedPosts" class="post-card">
+        <div class="post-header">
+          <div class="user-info">
+            <div class="user-avatar">👤</div>
+            <div class="user-details">
+              <h4 class="username">{{ post.authorName || 'Usuario' }}</h4>
+              <span class="post-date">{{ post.createdAt | date:'medium' }}</span>
+            </div>
+          </div>
+          <div class="post-actions">
+            <button class="action-btn" *ngIf="canDeletePost(post)" (click)="deletePost(post)" title="Eliminar post">🗑️</button>
+            <button class="action-btn">⋮</button>
+          </div>
+        </div>
+        <div class="post-content">
+          <h3 class="post-title">{{ post.title }}</h3>
+          <p class="post-text">{{ post.content }}</p>
+          <div class="book-tag" *ngIf="post.relatedBookId">
+            <span class="book-icon">📚</span>
+            <span>{{ getBookTitle(post.relatedBookId) }}</span>
+          </div>
+        </div>
+        <div class="post-footer">
+          <div class="post-stats">
+            <button class="like-btn" (click)="toggleLike(post)">
+              <span class="like-icon">{{ hasLiked(post) ? '❤️' : '🤍' }}</span>
+              <span class="like-count">{{ post.likes.length || 0 }}</span>
+            </button>
+            <button class="comment-btn" (click)="toggleComments(post._id)">
+              <span class="comment-icon">💬</span>
+              <span class="comment-count">{{ post.comments.length || 0 }}</span>
+            </button>
+            <button class="share-btn">
+              <span class="share-icon">📤</span>
+              <span>Compartir</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Sección de comentarios -->
+        <div class="comments-section" *ngIf="openComments[post._id]">
+          <div class="comments-list">
+            <div *ngFor="let comment of post.comments" class="comment-item">
+              <div class="comment-header">
+                <span class="comment-user">{{ comment.userName }}</span>
+                <span class="comment-date">{{ comment.createdAt | date:'short' }}</span>
+                <button 
+                  class="delete-comment-btn" 
+                  *ngIf="canDeleteComment(comment)" 
+                  (click)="deleteComment(post, comment)" 
+                  title="Eliminar comentario">🗑️</button>
+              </div>
+              <div class="comment-text">{{ comment.text }}</div>
+            </div>
+            <div *ngIf="!post.comments || post.comments.length === 0" class="no-comments">
+              <span>No hay comentarios aún.</span>
+            </div>
+          </div>
+          <div class="add-comment-form">
+            <input 
+              type="text" 
+              [(ngModel)]="newCommentText[post._id]" 
+              placeholder="Escribe un comentario..."
+              class="comment-input">
+            <button class="add-comment-btn" (click)="addComment(post)">Comentar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paginación -->
+    <div class="pagination" *ngIf="posts.length > 0">
+      <div class="pagination-info" *ngIf="posts.length > itemsPerPage">
+        <span>Mostrando {{ (currentPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentPage * itemsPerPage, posts.length) }} de {{ posts.length }} posts</span>
+      </div>
+      <div class="pagination-controls">
+        <button class="page-btn" [disabled]="currentPage === 1" (click)="previousPage()">←</button>
+        <button 
+          *ngFor="let page of getPageNumbers()" 
+          class="page-btn" 
+          [class.active]="page === currentPage"
+          (click)="goToPage(page)">
+          {{ page }}
+        </button>
+        <button class="page-btn" [disabled]="currentPage === totalPages" (click)="nextPage()">→</button>
+      </div>
+    </div>
+  </div>
+</div>

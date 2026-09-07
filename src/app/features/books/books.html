@@ -1,0 +1,395 @@
+<div class="books-bg">
+  <div class="books-container">
+    <!-- Header de la página -->
+    <div class="books-header">
+      <div class="header-content">
+        <h1 class="books-title">Biblioteca <span>BookStar</span></h1>
+        <p class="books-subtitle">Explora nuestra colección de libros</p>
+      </div>
+      <div class="header-actions">
+        <!-- Botón de publicar obra eliminado -->
+        <div class="search-filters">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input 
+              type="text" 
+              placeholder="Buscar libros..." 
+              class="search-input"
+              [(ngModel)]="searchQuery"
+              (input)="searchBooks()">
+          </div>
+          <select 
+            class="filter-select"
+            [(ngModel)]="selectedCategory"
+            (change)="filterByCategory()">
+            <option value="">Todas las categorías</option>
+            <option *ngFor="let category of categories" [value]="category">
+              {{category}}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros adicionales -->
+    <div class="books-filters">
+      <div class="filter-group">
+        <label class="filter-label">Rango de precio:</label>
+        <select 
+          class="filter-select"
+          [(ngModel)]="selectedPriceRange"
+          (change)="applyFilters()">
+          <option value="">Todos los precios</option>
+          <option value="0-10">$0 - $10</option>
+          <option value="10-25">$10 - $25</option>
+          <option value="25-50">$25 - $50</option>
+          <option value="50-100">$50 - $100</option>
+          <option value="100+">$100+</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Ordenar por:</label>
+        <select 
+          class="filter-select"
+          [(ngModel)]="selectedSort"
+          (change)="applyFilters()">
+          <option value="title">Título</option>
+          <option value="price-asc">Precio (menor a mayor)</option>
+          <option value="price-desc">Precio (mayor a menor)</option>
+          <option value="author">Autor</option>
+        </select>
+      </div>
+      <button class="clear-filters-btn" (click)="clearFilters()">
+        Limpiar Filtros
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Cargando libros...</p>
+    </div>
+
+    <!-- Grid de Libros -->
+    <div *ngIf="!loading" class="books-grid">
+      <div *ngFor="let book of paginatedBooks" class="book-card">
+        <div class="book-cover">
+          <img 
+            [src]="generateBookCover(book)" 
+            [alt]="book.title">
+          <div class="book-overlay">
+            <button class="view-btn" (click)="openDetailsModal(book)">Ver Detalles</button>
+          </div>
+        </div>
+        <div class="book-info">
+          <h3 class="book-title">{{book.title}}</h3>
+          <p class="book-author">{{book.authorName || 'Autor desconocido'}}</p>
+          <div class="book-meta">
+            <div class="book-categories">
+              <span *ngFor="let category of getDisplayCategories(book.category).display" class="book-category">
+                {{category}}
+              </span>
+              <span *ngIf="getDisplayCategories(book.category).showPlus" class="book-category-plus">
+                +
+              </span>
+            </div>
+            <span class="book-rating" *ngIf="book.averageRating">
+              ⭐ {{book.averageRating.toFixed(1)}}
+            </span>
+          </div>
+          <p class="book-price" *ngIf="book.price">${{book.price.toFixed(2)}}</p>
+          <p class="book-stock" *ngIf="book.stock !== undefined">
+            Stock: {{book.stock > 0 ? book.stock + ' disponibles' : 'Agotado'}}
+          </p>
+          <div class="book-actions" *ngIf="currentUser?.role !== 'author' && currentUser?.role !== 'admin'">
+            <button 
+              class="buy-btn" 
+              [disabled]="!book.stock || book.stock <= 0"
+              (click)="openOrderModal(book)">
+              {{ book.stock > 0 ? 'Comprar' : 'Agotado' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Results -->
+    <div *ngIf="!loading && filteredBooks.length === 0" class="no-results">
+      <p>No se encontraron libros que coincidan con los filtros.</p>
+      <button class="clear-filters-btn" (click)="clearFilters()">Limpiar Filtros</button>
+    </div>
+
+    <!-- Información de paginación -->
+    <div *ngIf="filteredBooks.length > itemsPerPage" class="pagination-info">
+      <p>Mostrando {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ Math.min(currentPage * itemsPerPage, filteredBooks.length) }} de {{ filteredBooks.length }} libros</p>
+    </div>
+
+    <!-- Paginación -->
+    <div *ngIf="filteredBooks.length > 0" class="pagination">
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage === 1"
+        (click)="previousPage()">
+        ←
+      </button>
+      
+      <button 
+        *ngFor="let page of getPageNumbers()" 
+        class="page-btn" 
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)">
+        {{ page }}
+      </button>
+      
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage === totalPages"
+        (click)="nextPage()">
+        →
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal de Detalles del Libro -->
+  <div *ngIf="showDetailsModal && selectedBook" class="modal-overlay" (click)="closeDetailsModal()">
+    <div class="modal-content details-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Detalles del Libro</h2>
+        <button class="close-btn" (click)="closeDetailsModal()">×</button>
+      </div>
+      
+      <div class="modal-body" *ngIf="selectedBook">
+        <div class="book-details-container">
+          <div class="book-cover-large">
+            <img [src]="generateBookCover(selectedBook)" [alt]="selectedBook.title">
+          </div>
+          
+          <div class="book-info-detailed">
+            <h1 class="book-title-large">{{selectedBook.title}}</h1>
+            <p class="book-author-large">{{selectedBook.authorName}}</p>
+            
+            <div class="book-categories">
+              <span class="category-label">Categorías:</span>
+              <div class="category-tags">
+                <span *ngFor="let category of selectedBook.category" class="category-tag">
+                  {{category}}
+                </span>
+              </div>
+            </div>
+            
+            <div class="book-rating-large" *ngIf="selectedBook.averageRating">
+              <span class="rating-label">Calificación:</span>
+              <span class="rating-stars">⭐ {{selectedBook.averageRating.toFixed(1)}}/5.0</span>
+            </div>
+            
+            <div class="book-description" *ngIf="selectedBook.description">
+              <h3>Descripción</h3>
+              <p>{{selectedBook.description}}</p>
+            </div>
+            
+            <div class="book-details-grid">
+              <div class="detail-item">
+                <span class="detail-label">Precio:</span>
+                <span class="detail-value price">${{selectedBook.price.toFixed(2)}}</span>
+              </div>
+              
+              <div class="detail-item">
+                <span class="detail-label">Stock:</span>
+                <span class="detail-value" [class.out-of-stock]="!selectedBook.stock || (selectedBook.stock || 0) <= 0">
+                  {{(selectedBook.stock || 0) > 0 ? (selectedBook.stock || 0) + ' disponibles' : 'Agotado'}}
+                </span>
+              </div>
+              
+              <div class="detail-item" *ngIf="selectedBook.language">
+                <span class="detail-label">Idioma:</span>
+                <span class="detail-value">{{selectedBook.language}}</span>
+              </div>
+              
+              <div class="detail-item" *ngIf="selectedBook.publicationDate">
+                <span class="detail-label">Fecha de publicación:</span>
+                <span class="detail-value">{{selectedBook.publicationDate | date:'longDate'}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="cancel-btn" (click)="closeDetailsModal()">Cerrar</button>
+        <button 
+          *ngIf="currentUser?.role !== 'author'"
+          class="confirm-btn" 
+          [disabled]="!selectedBook.stock || (selectedBook.stock || 0) <= 0"
+          (click)="selectedBook ? openOrderModal(selectedBook) : null">
+          {{ (selectedBook.stock || 0) > 0 ? 'Comprar Ahora' : 'Agotado' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Pedido -->
+  <div *ngIf="showOrderModal" class="modal-overlay" (click)="closeOrderModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Realizar Pedido</h2>
+        <button class="close-btn" (click)="closeOrderModal()">×</button>
+      </div>
+      
+      <div class="modal-body">
+
+        <div class="order-form">
+          <div class="form-group">
+            <label>Cantidad:</label>
+            <input 
+              type="number" 
+              [(ngModel)]="orderQuantity" 
+              min="1" 
+              [max]="selectedBook?.stock || 1"
+              class="quantity-input">
+          </div>
+
+          <div class="form-group">
+            <label>Dirección de envío:</label>
+            <input 
+              type="text" 
+              [(ngModel)]="shippingAddress.street" 
+              placeholder="Calle y número"
+              class="address-input">
+            <input 
+              type="text" 
+              [(ngModel)]="shippingAddress.city" 
+              placeholder="Ciudad"
+              class="address-input">
+            <input 
+              type="text" 
+              [(ngModel)]="shippingAddress.country" 
+              placeholder="País"
+              class="address-input">
+            <input 
+              type="text" 
+              [(ngModel)]="shippingAddress.zipCode" 
+              placeholder="Código postal"
+              class="address-input">
+          </div>
+
+          <div class="order-summary" *ngIf="selectedBook">
+            <h4>Resumen del pedido:</h4>
+            <div class="summary-item">
+              <span>Precio unitario:</span>
+              <span class="summary-price">${{ selectedBook!.price.toFixed(2) }}</span>
+            </div>
+            <div class="summary-item">
+              <span>Cantidad:</span>
+              <span>{{orderQuantity}}</span>
+            </div>
+            <div class="summary-item total">
+              <span>Total:</span>
+              <span class="summary-total">${{ (selectedBook!.price * orderQuantity).toFixed(2) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="cancel-btn" (click)="closeOrderModal()">Cancelar</button>
+        <button 
+          class="confirm-btn" 
+          [disabled]="!canPlaceOrder()"
+          (click)="placeOrder()">
+          Confirmar Pedido
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Publicar Obra -->
+  <div *ngIf="showPublishModal" class="modal-overlay" (click)="closePublishModal()">
+    <div class="modal-content publish-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ selectedBook ? '✏️ Editar Obra' : '📝 Publicar Nueva Obra' }}</h2>
+        <p class="author-info">Autor: {{ getCurrentAuthorName() }}</p>
+        <button class="close-btn" (click)="closePublishModal()">×</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="publish-form">
+          <div class="form-group">
+            <label>Título del libro:</label>
+            <input 
+              type="text" 
+              [(ngModel)]="newBook.title" 
+              placeholder="Ingresa el título de tu obra"
+              class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label>Descripción:</label>
+            <textarea 
+              [(ngModel)]="newBook.description" 
+              placeholder="Describe tu obra..."
+              class="form-textarea"
+              rows="4"></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Precio ($):</label>
+              <input 
+                type="number" 
+                [(ngModel)]="newBook.price" 
+                min="0" 
+                step="0.01"
+                placeholder="0.00"
+                class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label>Stock inicial:</label>
+              <input 
+                type="number" 
+                [(ngModel)]="newBook.stock" 
+                min="1"
+                placeholder="1"
+                class="form-input">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Idioma:</label>
+            <select [(ngModel)]="newBook.language" class="form-select">
+              <option value="Español">Español</option>
+              <option value="Inglés">Inglés</option>
+              <option value="Francés">Francés</option>
+              <option value="Alemán">Alemán</option>
+              <option value="Italiano">Italiano</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Categorías:</label>
+            <div class="categories-grid">
+              <button 
+                *ngFor="let category of categories" 
+                type="button"
+                class="category-btn"
+                [class.selected]="isCategorySelected(category)"
+                (click)="toggleCategory(category)">
+                {{category}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="cancel-btn" (click)="closePublishModal()">Cancelar</button>
+        <button 
+          class="confirm-btn" 
+          [disabled]="!canPublishBook()"
+          (click)="publishBook()">
+          {{ selectedBook ? 'Actualizar Obra' : 'Publicar Obra' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

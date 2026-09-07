@@ -1,0 +1,24 @@
+# Dependencies
+/node_modules
+
+# Angular
+/.angular
+/dist
+
+# Build / test
+/out-tsc
+/tmp
+/coverage
+*.log
+
+# IDE / OS
+.idea
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+
+# Env secrets (si se añaden en el futuro)
+.env
+.env.*
+!.env.example

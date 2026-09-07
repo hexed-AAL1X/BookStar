@@ -1,0 +1,279 @@
+.register-bg {
+  min-height: 100vh;
+  width: 100vw;
+  background: linear-gradient(120deg, #0a2236 0%, #143d5c 50%, #3ca0e7 100%);
+  background-size: 200% 200%;
+  animation: registerGradientMove 8s ease-in-out infinite;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: hidden;
+  padding-top: 4rem;
+}
+@keyframes registerGradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.register-card {
+  background: rgba(255,255,255,0.13);
+  border-radius: 22px;
+  box-shadow: 0 8px 40px 0 #0a2236cc, 0 1.5px 12px #3ca0e755;
+  padding: 2.7rem 2.2rem 2.2rem 2.2rem;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  position: relative;
+  backdrop-filter: blur(16px) saturate(1.2);
+  border: 1.5px solid #fff3;
+  overflow: hidden;
+  margin-top: 2rem;
+}
+.register-logo-anim {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.2rem;
+}
+.register-logo {
+  width: 82px;
+  height: 82px;
+  z-index: 2;
+  animation: registerPulseGlow 2.2s infinite alternate;
+}
+@keyframes registerPulseGlow {
+  0% {
+    filter: drop-shadow(0 0 0px #FFD70088) drop-shadow(0 0 0px #3ca0e7aa);
+    transform: scale(1);
+  }
+  60% {
+    filter: drop-shadow(0 0 16px #FFD700cc) drop-shadow(0 0 8px #3ca0e7cc);
+    transform: scale(1.04);
+  }
+  100% {
+    filter: drop-shadow(0 0 24px #FFD700ee) drop-shadow(0 0 16px #3ca0e7cc);
+    transform: scale(1.07);
+  }
+}
+.register-title {
+  font-family: 'Cinzel', 'Plus Jakarta Sans', 'Poppins', serif;
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #FFD700;
+  letter-spacing: 1px;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 12px #FFD70099, 0 2px 8px #0a2236cc;
+  filter: drop-shadow(0 0 6px #FFD70066);
+}
+.register-title span {
+  color: #3ca0e7;
+  text-shadow: 0 0 8px #3ca0e799;
+}
+.error-message {
+  background: rgba(220, 53, 69, 0.9);
+  color: #fff;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  animation: errorSlideIn 0.3s ease-out;
+}
+@keyframes errorSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.register-form {
+  margin-top: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.input-group {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.18);
+  border-radius: 8px;
+  border: 1.5px solid #e0e0e0;
+  box-shadow: 0 1px 6px #3ca0e722;
+  padding: 0.1rem 0.7rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.input-group:focus-within {
+  border-color: #FFD700;
+  box-shadow: 0 2px 12px #FFD70033, 0 0px 8px #3ca0e733;
+  background: #fffbe6cc;
+}
+.input-icon {
+  font-size: 1.2rem;
+  margin-right: 0.6rem;
+  color: #3ca0e7;
+  user-select: none;
+}
+.register-form input {
+  width: 100%;
+  padding: 0.9rem 0.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: transparent;
+  color: #0a2236;
+  font-family: 'Poppins', 'DM Sans', 'Palanquin Dark', sans-serif;
+  outline: none;
+}
+.register-btn {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  background: linear-gradient(90deg, #FFD700 0%, #3ca0e7 100%);
+  color: #0a2236;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  box-shadow: 0 2px 12px #FFD70033, 0 0px 8px #3ca0e733;
+  transition: box-shadow 0.2s, transform 0.2s;
+  text-shadow: 0 1px 6px #fff8;
+  outline: none;
+  font-family: 'Poppins', 'DM Sans', 'Palanquin Dark', sans-serif;
+}
+.register-btn:hover:not(:disabled) {
+  box-shadow: 0 4px 24px #FFD70066, 0 0px 16px #3ca0e799;
+  transform: scale(1.04) rotate(-1deg);
+}
+.register-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+.register-link {
+  margin-top: 1.2rem;
+  color: #0a2236;
+  font-size: 1.01rem;
+  font-family: 'Poppins', 'DM Sans', 'Palanquin Dark', sans-serif;
+}
+.register-link a {
+  color: #FFD700;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+.register-link a:hover {
+  color: #3ca0e7;
+}
+/* Estilos para selección de roles */
+.role-selection {
+  margin-top: 0.5rem;
+}
+
+.role-label {
+  display: block;
+  color: #0a2236;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.8rem;
+  text-align: left;
+}
+
+.role-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.role-option {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.role-option:hover {
+  background: rgba(255,255,255,0.25);
+  border-color: rgba(255,215,0,0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(255,215,0,0.2);
+}
+
+.role-option.selected {
+  background: linear-gradient(135deg, rgba(255,215,0,0.2) 0%, rgba(60,160,231,0.2) 100%);
+  border-color: #FFD700;
+  box-shadow: 0 4px 16px rgba(255,215,0,0.3);
+  transform: translateY(-2px);
+}
+
+.role-icon {
+  font-size: 2rem;
+  min-width: 40px;
+  text-align: center;
+}
+
+.role-info {
+  flex: 1;
+  text-align: left;
+}
+
+.role-info h4 {
+  color: #0a2236;
+  font-weight: 700;
+  font-size: 1rem;
+  margin: 0 0 0.3rem 0;
+}
+
+.role-info p {
+  color: #0a2236;
+  font-size: 0.85rem;
+  margin: 0;
+  opacity: 0.8;
+}
+
+@media (max-width: 600px) {
+  .register-bg {
+    padding-top: 2rem;
+  }
+  .register-card {
+    padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+    max-width: 98vw;
+    margin-top: 1rem;
+  }
+  .register-logo {
+    width: 60px;
+    height: 60px;
+  }
+  .register-title {
+    font-size: 1.3rem;
+  }
+  
+  .role-option {
+    padding: 0.8rem;
+  }
+  
+  .role-icon {
+    font-size: 1.5rem;
+    min-width: 30px;
+  }
+  
+  .role-info h4 {
+    font-size: 0.9rem;
+  }
+  
+  .role-info p {
+    font-size: 0.8rem;
+  }
+} 

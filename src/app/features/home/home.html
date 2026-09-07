@@ -1,0 +1,85 @@
+<div class="dashboard-bg">
+  <div class="dashboard-container">
+    <!-- Header del Dashboard -->
+    <div class="dashboard-header">
+      <div class="welcome-section">
+        <h1 class="welcome-title">¡Bienvenido a <span>BookStar</span>!</h1>
+        <p class="welcome-subtitle">Tu biblioteca digital personal</p>
+      </div>
+      <div class="stats-overview">
+        <div class="stat-card">
+          <span class="stat-icon">📚</span>
+          <div class="stat-info">
+            <span class="stat-number">{{ stats.books }}</span>
+            <span class="stat-label">
+              {{ currentUser?.role === 'admin' || currentUser?.email?.endsWith('@admin.com') ? 'Libros Totales' : (currentUser?.role === 'author' ? 'Libros Publicados' : 'Libros Comprados') }}
+            </span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">📝</span>
+          <div class="stat-info">
+            <span class="stat-number">{{ stats.posts }}</span>
+            <span class="stat-label">
+              {{ currentUser?.role === 'admin' || currentUser?.email?.endsWith('@admin.com') ? 'Posts Totales' : 'Mis Posts' }}
+            </span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">📦</span>
+          <div class="stat-info">
+            <span class="stat-number">{{ stats.orders }}</span>
+            <span class="stat-label">
+              {{ currentUser?.role === 'admin' || currentUser?.email?.endsWith('@admin.com') ? 'Pedidos Totales' : 'Pedidos Recibidos' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accesos Rápidos -->
+    <div class="quick-actions">
+      <h2 class="section-title">Accesos Rápidos</h2>
+      <div class="action-grid">
+        <a routerLink="/books" class="action-card">
+          <div class="action-icon">📚</div>
+          <h3>Explorar Libros</h3>
+          <p>Descubre nuevos títulos</p>
+        </a>
+        <a routerLink="/posts" class="action-card">
+          <div class="action-icon">📝</div>
+          <h3>Ver Posts</h3>
+          <p>Comunidad de lectores</p>
+        </a>
+        <a routerLink="/orders" class="action-card">
+          <div class="action-icon">📦</div>
+          <h3>Mis Pedidos</h3>
+          <p>Historial de compras</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- Actividad Reciente -->
+    <div class="recent-activity">
+      <h2 class="section-title">Actividad Reciente</h2>
+      <div class="activity-list">
+        <div *ngIf="loading" class="loading-activity">
+          <p>Cargando actividad reciente...</p>
+        </div>
+        
+        <div *ngIf="!loading && recentPosts.length === 0" class="no-activity">
+          <p>No hay actividad reciente</p>
+        </div>
+        
+        <div *ngFor="let post of recentPosts" class="activity-item">
+          <div class="activity-icon">{{ getPostIcon(post.tags) }}</div>
+          <div class="activity-content">
+            <h4>{{ post.title }}</h4>
+            <p>{{ post.authorName }} - {{ post.content.substring(0, 100) }}{{ post.content.length > 100 ? '...' : '' }}</p>
+            <span class="activity-time">{{ getTimeAgo(post.createdAt) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

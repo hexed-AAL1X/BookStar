@@ -1,0 +1,115 @@
+<div class="users-bg">
+  <div class="users-container">
+    <!-- Header de la página -->
+    <div class="users-header">
+      <div class="header-content">
+        <h1 class="users-title">👥 <span>Gestión de Usuarios</span></h1>
+        <p class="users-subtitle">Panel de administración - Gestión completa de usuarios del sistema</p>
+      </div>
+      <div class="users-stats">
+        <div class="stat-item">
+          <span class="stat-number">{{ stats.total }}</span>
+          <span class="stat-label">Total Usuarios</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ stats.buyers }}</span>
+          <span class="stat-label">Compradores</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ stats.authors }}</span>
+          <span class="stat-label">Autores</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ stats.admins }}</span>
+          <span class="stat-label">Administradores</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones de administrador -->
+    <div class="admin-actions">
+      <button class="action-btn export-btn" (click)="exportUsers()" title="Exportar usuarios">
+        📊 Exportar
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+      <p>Cargando usuarios...</p>
+    </div>
+
+    <!-- No Users State -->
+    <div *ngIf="!loading && users.length === 0" class="no-users">
+      <p>No hay usuarios registrados</p>
+    </div>
+
+    <!-- Users Cards -->
+    <div *ngIf="!loading && users.length > 0" class="users-cards">
+      <div *ngFor="let user of users" class="user-card">
+        <div class="user-header">
+          <div class="user-avatar">
+            <span class="avatar-icon">👤</span>
+          </div>
+          <div class="user-info">
+            <div class="user-name">{{ user.name }}</div>
+            <div class="user-email">{{ user.email }}</div>
+            <div class="user-role">
+              <span class="role-badge {{ getRoleBadgeClass(user.role) }}">
+                {{ getUserRoleText(user.role) }}
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="user-details">
+          <div class="detail-item">
+            <span class="detail-label">ID:</span>
+            <span class="detail-value">{{ user._id || 'N/A' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Registrado:</span>
+            <span class="detail-value">{{ formatDate(user.createdAt || '') }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Última actualización:</span>
+            <span class="detail-value">{{ formatDate(user.updatedAt || '') }}</span>
+          </div>
+        </div>
+        
+        <!-- Acciones de administrador -->
+        <div class="user-actions">
+          <div class="role-selector">
+            <label class="role-label">Rol:</label>
+            <select 
+              class="role-select" 
+              [value]="user.role"
+              (change)="onRoleChange($event, user._id || '')">
+              <option value="buyer">Comprador</option>
+              <option value="author">Autor</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+          
+          <div class="action-buttons">
+            <button 
+              class="action-btn delete-btn" 
+              (click)="deleteUser(user._id || '')"
+              title="Eliminar usuario"
+              *ngIf="user._id !== currentUser?._id">
+              🗑️ Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paginación (solo si hay muchos usuarios) -->
+    <div *ngIf="!loading && users.length > 10" class="pagination">
+      <button class="page-btn">←</button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn">3</button>
+      <button class="page-btn">→</button>
+    </div>
+  </div>
+</div> 

@@ -1,0 +1,29 @@
+<div class="login-bg">
+  <div class="login-card">
+    <div class="login-logo-anim">
+      <img src="icons/BookStarIcon2.png" alt="BookStar Logo" class="login-logo">
+      <div class="login-star-glow"></div>
+    </div>
+    <h2 class="login-title">Inicia Sesión en <span>BookStar</span></h2>
+    
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+    
+    <form class="login-form" (ngSubmit)="onLogin()">
+      <div class="input-group">
+        <span class="input-icon">📧</span>
+        <input type="email" placeholder="Correo electrónico" [(ngModel)]="email" name="email" required (input)="clearError()">
+      </div>
+      <div class="input-group">
+        <span class="input-icon">🔒</span>
+        <input type="password" placeholder="Contraseña" [(ngModel)]="password" name="password" required (input)="clearError()">
+      </div>
+      <button type="submit" class="login-btn" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Entrar</span>
+        <span *ngIf="isLoading">Entrando...</span>
+      </button>
+    </form>
+    <p class="login-link">¿No tienes cuenta? <a routerLink="/register">Regístrate</a></p>
+  </div>
+</div> 

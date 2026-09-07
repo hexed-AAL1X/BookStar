@@ -1,0 +1,284 @@
+<div class="profile-bg">
+  <div class="profile-container">
+    <div class="profile-card">
+      <div class="profile-banner">
+        <div class="avatar">
+          <span>{{ user?.name?.charAt(0) }}</span>
+        </div>
+      </div>
+      
+      <div class="profile-content">
+        <div class="profile-header">
+          <h2 class="profile-title">{{ user?.name }}</h2>
+          <p class="role-tag">{{ user?.role | titlecase }}</p>
+          <button *ngIf="!isEditing" class="edit-btn" (click)="startEditing()">
+            ✏️ Editar Perfil
+          </button>
+        </div>
+
+        <!-- Mensajes de estado -->
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+        <div *ngIf="successMessage" class="success-message">
+          {{ successMessage }}
+        </div>
+        
+        <div class="info-section">
+          <div class="info-group">
+            <h3>📧 Información Personal</h3>
+            
+            <!-- Modo visualización -->
+            <div *ngIf="!isEditing">
+              <div class="info-item">
+                <span class="info-label">Email:</span>
+                <span class="info-value">{{ user?.email }}</span>
+                <button class="copy-btn" (click)="copyToClipboard(user?.email)">
+                  <i class="fa fa-copy"></i>
+                </button>
+              </div>
+              <div class="info-item" *ngIf="user?.id">
+                <span class="info-label">ID:</span>
+                <span class="info-value">{{ user?.id }}</span>
+                <button class="copy-btn" (click)="copyToClipboard(user?.id)">
+                  <i class="fa fa-copy"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Modo edición -->
+            <div *ngIf="isEditing" class="edit-form">
+              <div class="form-group">
+                <label for="name">Nombre:</label>
+                <input 
+                  type="text" 
+                  id="name" 
+                  [(ngModel)]="editingUser.name" 
+                  class="form-input"
+                  placeholder="Tu nombre">
+              </div>
+              <div class="form-group">
+                <label for="email">Email:</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  [(ngModel)]="editingUser.email" 
+                  class="form-input"
+                  placeholder="tu@email.com">
+              </div>
+            </div>
+          </div>
+          
+          <div class="info-group">
+            <h3>👤 Perfil</h3>
+            
+            <!-- Modo visualización -->
+            <div *ngIf="!isEditing">
+              <ng-container *ngIf="user?.profile as profile">
+                <ng-container *ngIf="isProfileObject(profile); else bioString">
+                  <div class="info-item" *ngIf="profile.bio">
+                    <span class="info-label">Bio:</span>
+                    <span class="info-value">{{ profile.bio }}</span>
+                  </div>
+                  <div class="info-item" *ngIf="profile.website">
+                    <span class="info-label">Website:</span>
+                    <span class="info-value">
+                      <a [href]="profile.website" target="_blank">{{ profile.website }}</a>
+                    </span>
+                    <button class="copy-btn" (click)="copyToClipboard(profile.website)">
+                      <i class="fa fa-copy"></i>
+                    </button>
+                  </div>
+                </ng-container>
+                <ng-template #bioString>
+                  <div class="info-item">
+                    <span class="info-label">Bio:</span>
+                    <span class="info-value">{{ profile }}</span>
+                  </div>
+                </ng-template>
+              </ng-container>
+            </div>
+
+            <!-- Modo edición -->
+            <div *ngIf="isEditing" class="edit-form">
+              <div class="form-group">
+                <label for="bio">Bio:</label>
+                <textarea 
+                  id="bio" 
+                  [ngModel]="getProfileBio()" 
+                  (ngModelChange)="setProfileBio($event)"
+                  class="form-textarea"
+                  placeholder="Cuéntanos sobre ti..."
+                  rows="3"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="website">Website:</label>
+                <input 
+                  type="url" 
+                  id="website" 
+                  [ngModel]="getProfileWebsite()" 
+                  (ngModelChange)="setProfileWebsite($event)"
+                  class="form-input"
+                  placeholder="https://tuwebsite.com">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="social-section">
+          <h3>🌐 Redes Sociales</h3>
+          
+          <!-- Modo visualización -->
+          <div *ngIf="!isEditing">
+            <div class="social-icons" *ngIf="user?.social && (user?.social?.twitter || user?.social?.instagram)">
+              <a *ngIf="user?.social?.twitter" 
+                 [href]="'https://twitter.com/' + user?.social?.twitter" 
+                 target="_blank" 
+                 class="twitter">
+                <i class="fab fa-twitter"></i>
+                <span class="social-username">&#64;{{ user?.social?.twitter }}</span>
+              </a>
+              <a *ngIf="user?.social?.instagram" 
+                 [href]="'https://instagram.com/' + user?.social?.instagram" 
+                 target="_blank" 
+                 class="instagram">
+                <i class="fab fa-instagram"></i>
+                <span class="social-username">&#64;{{ user?.social?.instagram }}</span>
+              </a>
+            </div>
+            <div *ngIf="!user?.social || (!user?.social?.twitter && !user?.social?.instagram)" class="no-social">
+              <p>No hay redes sociales configuradas</p>
+            </div>
+          </div>
+
+          <!-- Modo edición -->
+          <div *ngIf="isEditing" class="edit-form">
+            <div class="form-group">
+              <label for="twitter">Twitter (sin &#64;):</label>
+              <input 
+                type="text" 
+                id="twitter" 
+                [ngModel]="getSocialTwitter()" 
+                (ngModelChange)="setSocialTwitter($event)"
+                class="form-input"
+                placeholder="usuario">
+            </div>
+            <div class="form-group">
+              <label for="instagram">Instagram (sin &#64;):</label>
+              <input 
+                type="text" 
+                id="instagram" 
+                [ngModel]="getSocialInstagram()" 
+                (ngModelChange)="setSocialInstagram($event)"
+                class="form-input"
+                placeholder="usuario">
+            </div>
+          </div>
+        </div>
+        
+        <!-- Sección de cambio de contraseña -->
+        <div class="password-section">
+          <div class="section-header">
+            <h3>🔐 Cambiar Contraseña</h3>
+            <button 
+              class="toggle-btn" 
+              (click)="togglePasswordSection()"
+              [class.active]="showPasswordSection">
+              {{ showPasswordSection ? '❌ Cancelar' : '🔐 Cambiar Contraseña' }}
+            </button>
+          </div>
+          
+          <div *ngIf="showPasswordSection" class="password-form">
+            
+            <div class="form-group">
+              <label for="newPassword">Nueva Contraseña:</label>
+              <div class="password-input-container">
+                <input 
+                  [type]="showNewPassword ? 'text' : 'password'"
+                  id="newPassword" 
+                  [(ngModel)]="passwordData.newPassword" 
+                  class="form-input password-input"
+                  placeholder="Mínimo 6 caracteres">
+                <button 
+                  type="button"
+                  class="eye-btn" 
+                  (click)="togglePasswordVisibility('new')"
+                  [title]="showNewPassword ? 'Ocultar' : 'Mostrar'">
+                  {{ showNewPassword ? '👁️' : '🙈' }}
+                </button>
+              </div>
+              <div class="password-strength" *ngIf="passwordData.newPassword">
+                <span class="strength-indicator" [class.weak]="passwordData.newPassword.length < 6" [class.strong]="passwordData.newPassword.length >= 6">
+                  {{ passwordData.newPassword.length < 6 ? '❌ Débil' : '✅ Fuerte' }}
+                </span>
+                <span class="char-count">{{ passwordData.newPassword.length }}/6 caracteres</span>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="confirmPassword">Confirmar Nueva Contraseña:</label>
+              <div class="password-input-container">
+                <input 
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  id="confirmPassword" 
+                  [(ngModel)]="passwordData.confirmPassword" 
+                  class="form-input password-input"
+                  placeholder="Repite la nueva contraseña">
+                <button 
+                  type="button"
+                  class="eye-btn" 
+                  (click)="togglePasswordVisibility('confirm')"
+                  [title]="showConfirmPassword ? 'Ocultar' : 'Mostrar'">
+                  {{ showConfirmPassword ? '👁️' : '🙈' }}
+                </button>
+              </div>
+              <div class="password-match" *ngIf="passwordData.confirmPassword">
+                <span class="match-indicator" [class.match]="passwordData.newPassword === passwordData.confirmPassword" [class.no-match]="passwordData.newPassword !== passwordData.confirmPassword">
+                  {{ passwordData.newPassword === passwordData.confirmPassword ? '✅ Coinciden' : '❌ No coinciden' }}
+                </span>
+              </div>
+            </div>
+            
+            <div class="password-actions">
+              <button 
+                class="change-password-btn" 
+                (click)="changePassword()" 
+                [disabled]="changingPassword || !passwordData.newPassword || !passwordData.confirmPassword || passwordData.newPassword.length < 6 || passwordData.newPassword !== passwordData.confirmPassword">
+                {{ changingPassword ? '🔄 Cambiando...' : '💾 Cambiar Contraseña' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="timestamps" *ngIf="user?.createdAt || user?.updatedAt">
+          <h3>⏰ Historial</h3>
+          <div class="timestamp-item" *ngIf="user?.createdAt">
+            <span class="timestamp-label">🕒 Creado:</span>
+            <span class="timestamp-value">{{ user?.createdAt | date:'medium' }}</span>
+          </div>
+          <div class="timestamp-item" *ngIf="user?.updatedAt">
+            <span class="timestamp-label">🛠 Actualizado:</span>
+            <span class="timestamp-value">{{ user?.updatedAt | date:'medium' }}</span>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div *ngIf="isEditing" class="action-buttons">
+          <button 
+            class="save-btn" 
+            (click)="saveProfile()" 
+            [disabled]="loading">
+            {{ loading ? 'Guardando...' : '💾 Guardar Cambios' }}
+          </button>
+          <button 
+            class="cancel-btn" 
+            (click)="cancelEditing()" 
+            [disabled]="loading">
+            ❌ Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  

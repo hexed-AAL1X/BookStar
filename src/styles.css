@@ -1,0 +1,97 @@
+/* You can add global styles to this file, and also import other style files */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden; /* Solo ocultar scroll horizontal */
+    overflow-y: auto; /* Permitir scroll vertical */
+}
+
+/* Asegurar que el contenido principal tenga scroll vertical */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', 'DM Sans', 'Palanquin Dark', sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Asegurar que el contenido principal tenga scroll */
+main, .main-content {
+    min-height: calc(100vh - 90px);
+    margin-top: 90px;
+}
+
+/* Asegurar que las páginas tengan scroll vertical */
+.books-bg, .posts-bg, .orders-bg, .home-bg, .profile-bg {
+    min-height: calc(100vh - 90px);
+    overflow-y: auto;
+    overflow-x: hidden;
+}  
+@font-face {
+    font-family: 'Plus Jakarta Sans';
+    src: url('/fonts/PlusJakartaSans-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Poppins';
+    src: url('/fonts/Poppins-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Poppins';
+    src: url('/fonts/Poppins-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Palanquin Dark';
+    src: url('/fonts/PalanquinDark-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Palanquin Dark';
+    src: url('/fonts/PalanquinDark-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Palanquin Dark';
+    src: url('/fonts/PalanquinDark-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Palanquin Dark';
+    src: url('/fonts/PalanquinDark-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'DM Sans';
+    src: url('/fonts/DMSans-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Cinzel';
+    src: url('/fonts/Cinzel-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }

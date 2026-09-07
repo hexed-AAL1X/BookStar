@@ -1,0 +1,56 @@
+<div class="register-bg">
+  <div class="register-card">
+    <div class="register-logo-anim">
+      <img src="icons/BookStarIcon2.png" alt="BookStar Logo" class="register-logo">
+    </div>
+    <h2 class="register-title">Crea tu cuenta en <span>BookStar</span></h2>
+    
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+    
+    <form class="register-form" (ngSubmit)="onRegister()">
+      <div class="input-group">
+        <span class="input-icon">👤</span>
+        <input type="text" placeholder="Nombre completo" [(ngModel)]="name" name="name" required (input)="clearError()">
+      </div>
+      <div class="input-group">
+        <span class="input-icon">📧</span>
+        <input type="email" placeholder="Correo electrónico" [(ngModel)]="email" name="email" required (input)="clearError()">
+      </div>
+      <div class="input-group">
+        <span class="input-icon">🔒</span>
+        <input type="password" placeholder="Contraseña" [(ngModel)]="password" name="password" required (input)="clearError()">
+      </div>
+      <div class="input-group">
+        <span class="input-icon">🔒</span>
+        <input type="password" placeholder="Confirmar contraseña" [(ngModel)]="confirmPassword" name="confirmPassword" required (input)="clearError()">
+      </div>
+      
+      <div class="role-selection">
+        <label class="role-label">Selecciona tu tipo de cuenta:</label>
+        <div class="role-options">
+          <div class="role-option" [class.selected]="selectedRole === 'buyer'" (click)="selectedRole = 'buyer'">
+            <div class="role-icon">🛒</div>
+            <div class="role-info">
+              <h4>Comprador (Buyer)</h4>
+              <p>Compra libros y disfruta de la lectura</p>
+            </div>
+          </div>
+          <div class="role-option" [class.selected]="selectedRole === 'author'" (click)="selectedRole = 'author'">
+            <div class="role-icon">✍️</div>
+            <div class="role-info">
+              <h4>Autor (Author)</h4>
+              <p>Publica y vende tus propios libros</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="register-btn" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Registrarse</span>
+        <span *ngIf="isLoading">Creando cuenta...</span>
+      </button>
+    </form>
+    <p class="register-link">¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a></p>
+  </div>
+</div> 

@@ -1,0 +1,118 @@
+<header class="header">
+  <!-- Partículas de fondo -->
+  <div class="particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+  
+  <!-- Contenido principal -->
+  <div class="header-container">
+    <!-- Logo y título -->
+    <div class="brand-section">
+      <div class="logo-container">
+        <div class="logo-orb">
+          <img src="icons/BookStarIcon2.png" alt="BookStar Logo" class="logo-image">
+          <div class="orb-glow"></div>
+          <div class="orb-rings">
+            <div class="ring ring-1"></div>
+            <div class="ring ring-2"></div>
+            <div class="ring ring-3"></div>
+          </div>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">BookStar</h1>
+          <span class="brand-subtitle">Tu biblioteca digital</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navegación principal (solo si logueado) -->
+    <nav class="nav-section" [class.nav-open]="menuOpen" *ngIf="isLoggedIn()">
+      <div class="nav-links">
+        <a routerLink="/home" routerLinkActive="active" class="nav-link">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-text">Inicio</span>
+        </a>
+        <a routerLink="/books" routerLinkActive="active" class="nav-link">
+          <span class="nav-icon">📚</span>
+          <span class="nav-text">Libros</span>
+        </a>
+        <a routerLink="/orders" routerLinkActive="active" class="nav-link">
+          <span class="nav-icon">📦</span>
+          <span class="nav-text">Pedidos</span>
+        </a>
+        <a routerLink="/posts" routerLinkActive="active" class="nav-link">
+          <span class="nav-icon">💬</span>
+          <span class="nav-text">Posts</span>
+        </a>
+        <!-- Botón Users solo para administradores -->
+        <a routerLink="/users" routerLinkActive="active" class="nav-link admin-only" *ngIf="isAdmin()">
+          <span class="nav-icon">👥</span>
+          <span class="nav-text">Users</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- Botones de acción (solo si logueado) -->
+    <div class="action-buttons" *ngIf="isLoggedIn()">
+      <div class="user-info">
+        <span class="user-name">{{ getUserInfo()?.name }}</span>
+        <span class="user-role">{{ getUserRole() }}</span>
+      </div>
+      <!-- Botón de notificaciones eliminado -->
+      <!-- <button class="notification-btn" title="Notificaciones" (click)="toggleNotifications()">
+        <span class="btn-icon">🔔</span>
+        <span class="notification-badge" *ngIf="notificationCount > 0">{{ notificationCount }}</span>
+      </button> -->
+      <button class="profile-btn" title="Mi perfil" (click)="goToProfile()">
+        <div class="profile-avatar">👤</div>
+      </button>
+      <button class="logout-btn" title="Cerrar sesión" *ngIf="isLoggedIn(); else loginBtn" (click)="logout()">
+        <span class="btn-icon">🚪</span>
+      </button>
+    </div>
+
+    <!-- Dropdown de notificaciones -->
+    <!-- <div class="notifications-dropdown" *ngIf="notificationsOpen" (click)="$event.stopPropagation()">
+      <div class="notifications-header">
+        <h3>🔔 Notificaciones</h3>
+        <button class="close-notifications-btn" (click)="closeNotifications()">×</button>
+      </div>
+      
+      <div class="notifications-content">
+        <div *ngIf="notifications.length === 0" class="no-notifications">
+          <p>No hay notificaciones nuevas</p>
+        </div>
+        
+        <div *ngFor="let notification of notifications" class="notification-item">
+          <div class="notification-icon">✅</div>
+          <div class="notification-content">
+            <h4>Pedido completado</h4>
+            <p>Tu pedido #{{ notification._id?.substring(-8) || notification._id }} ha sido completado</p>
+            <span class="notification-time">{{ getNotificationTime(notification) }}</span>
+          </div>
+          <div class="notification-total">
+            <span class="total-amount">${{ getOrderTotal(notification).toFixed(2) }}</span>
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- Menú hamburguesa (solo si logueado) -->
+    <button class="hamburger" (click)="menuOpen = !menuOpen" [class.hamburger-open]="menuOpen" aria-label="Menú" *ngIf="isLoggedIn()">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+  </div>
+</header>
+
+<ng-template #loginBtn>
+  <button class="logout-btn" title="Iniciar sesión" (click)="goToLogin()">
+    <span class="btn-icon">🚪</span>
+  </button>
+</ng-template>
+

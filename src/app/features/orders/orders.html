@@ -1,0 +1,202 @@
+<div class="orders-bg">
+  <div class="orders-container">
+    <!-- Header de la página -->
+    <div class="orders-header">
+      <div class="header-content">
+        <h1 class="orders-title">Mis <span>{{ isAdmin ? 'Todas las Órdenes' : (isAuthor ? 'Ventas' : 'Pedidos') }}</span></h1>
+        <p class="orders-subtitle">{{ isAdmin ? 'Panel de administración - Todas las órdenes del sistema' : (isAuthor ? 'Historial de ventas de tus libros' : 'Historial de compras y pedidos') }}</p>
+      </div>
+      <div class="orders-stats">
+        <div class="stat-item">
+          <span class="stat-number">{{ stats.total }}</span>
+          <span class="stat-label">{{ isAdmin ? 'Total Órdenes' : (isAuthor ? 'Ventas' : 'Total') }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ stats.pending }}</span>
+          <span class="stat-label">{{ isAdmin ? 'Pendientes' : 'Pendientes' }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ stats.completed }}</span>
+          <span class="stat-label">{{ isAdmin ? 'Completadas' : (isAuthor ? 'Completadas' : 'Completados') }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ganancias totales para autores -->
+    <div *ngIf="isAuthor && !isAdmin && orders.length > 0" class="earnings-section">
+      <div class="earnings-card">
+        <h3>💰 Ganancias Totales</h3>
+        <div class="earnings-amount">${{ getTotalEarnings().toFixed(2) }}</div>
+        <p>De todas tus ventas completadas</p>
+      </div>
+    </div>
+
+    <!-- Notificaciones de pedidos completados -->
+    <div *ngIf="showNotifications && !isAdmin" class="notifications-section">
+      <div class="notifications-header">
+        <h3>🎉 ¡{{ isAuthor ? 'Ventas' : 'Pedidos' }} Completados!</h3>
+        <button class="close-notifications-btn" (click)="closeNotifications()">×</button>
+      </div>
+      <div class="notifications-list">
+        <div *ngFor="let order of completedOrders" class="notification-card">
+          <div class="notification-icon">✅</div>
+          <div class="notification-content">
+            <h4>{{ isAuthor ? 'Venta' : 'Pedido' }} #{{ order._id.substring(-8) || order._id }} completado</h4>
+            <p>{{ getOrderItemsText(order) }}</p>
+            <span class="notification-time">{{ getNotificationTime(order) }}</span>
+          </div>
+          <div class="notification-total">
+            <span class="total-amount">${{ isAuthor ? getAuthorEarnings(order).toFixed(2) : getOrderTotal(order).toFixed(2) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+      <p>Cargando {{ isAuthor ? 'ventas' : 'pedidos' }}...</p>
+    </div>
+
+    <!-- No Orders State -->
+    <div *ngIf="!loading && orders.length === 0" class="no-orders">
+      <p>No tienes {{ isAuthor ? 'ventas' : 'pedidos' }} aún</p>
+    </div>
+
+    <!-- Orders Cards -->
+    <div *ngIf="!loading && orders.length > 0" class="orders-cards">
+      <div *ngFor="let order of orders" class="order-card">
+        <div class="order-header">
+          <div class="order-id">#{{ order._id.substring(-8) || order._id }}</div>
+          <div class="order-date">{{ formatDate(order.createdAt) }}</div>
+        </div>
+        
+        <!-- Información adicional para admins -->
+        <div *ngIf="isAdmin" class="order-admin-info">
+          <div class="admin-info-item">
+            <span class="info-label">Cliente:</span>
+            <span class="info-value">{{ getUserName(order.userId) }}</span>
+          </div>
+          <div class="admin-info-item">
+            <span class="info-label">Autor:</span>
+            <span class="info-value">{{ getAuthorName(order.items[0].authorId || '') }}</span>
+          </div>
+        </div>
+        
+        <div class="order-status">
+          <span class="status-badge {{ getStatusBadgeClass(order.paymentStatus) }}">
+            {{ getStatusText(order.paymentStatus) }}
+          </span>
+        </div>
+        
+        <div class="order-items">
+          <h4>Libros:</h4>
+          <div *ngFor="let item of order.items; let itemIndex = index" class="order-item">
+            <span class="item-title">{{ item.title }}</span>
+            <span class="item-details">
+              <!-- Para compradores: mostrar input editable para cantidad -->
+              <span *ngIf="!isAuthor && !isAdmin && canEditOrder(order)">
+                Cantidad: 
+                <div class="quantity-control">
+                  <input 
+                    type="number" 
+                    [value]="item.quantity" 
+                    min="1" 
+                    max="10"
+                    class="quantity-input"
+                    #quantityInput
+                    (keyup.enter)="confirmQuantityChange(order._id, itemIndex, quantityInput.value)">
+                  <button 
+                    class="confirm-btn"
+                    (click)="confirmQuantityChange(order._id, itemIndex, quantityInput.value)"
+                    title="Confirmar cantidad">
+                    ✓
+                  </button>
+                </div>
+              </span>
+              <!-- Para autores y admins: mostrar cantidad fija -->
+              <span *ngIf="isAuthor || isAdmin || !canEditOrder(order)">
+                Cantidad: {{ item.quantity }}
+              </span>
+              | Precio: ${{ item.unitPrice.toFixed(2) }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="order-total">
+          <span class="total-label">{{ isAdmin ? 'Total:' : (isAuthor ? 'Ganancias:' : 'Total:') }}</span>
+          <span class="total-amount">${{ isAdmin ? getOrderTotal(order).toFixed(2) : (isAuthor ? getAuthorEarnings(order).toFixed(2) : getOrderTotal(order).toFixed(2)) }}</span>
+        </div>
+        
+        <!-- Acciones para autores (solo autores pueden cambiar estado) -->
+        <div *ngIf="isAuthor && !isAdmin" class="order-actions">
+          <div class="status-selector">
+            <label class="status-label">Estado:</label>
+            <div class="status-control">
+              <select 
+                class="status-select" 
+                [value]="order.paymentStatus"
+                #statusSelect
+                (change)="onStatusChange(order._id, $event)">
+                <option *ngFor="let status of getStatusOptions()" [value]="status">
+                  {{ getStatusDisplayText(status) }}
+                </option>
+              </select>
+              <button 
+                class="status-confirm-btn"
+                (click)="confirmStatusChange(order._id, statusSelect.value)"
+                title="Confirmar cambio de estado">
+                ✓
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Acciones para compradores -->
+        <div *ngIf="!isAuthor && !isAdmin" class="order-actions">
+          <div class="buyer-actions">
+            <!-- Botón de eliminar para órdenes pendientes -->
+            <button 
+              *ngIf="canDeleteOrder(order)"
+              class="action-btn delete-btn" 
+              (click)="deleteOrder(order._id)"
+              title="Eliminar pedido">
+              🗑️ Eliminar
+            </button>
+            <!-- Botón de cancelar para órdenes en proceso -->
+            <button 
+              *ngIf="order.paymentStatus === 'in_progress'"
+              class="action-btn cancel-btn" 
+              (click)="cancelOrder(order._id)"
+              title="Cancelar pedido">
+              ❌ Cancelar
+            </button>
+            <!-- Botón de rastrear para órdenes enviadas -->
+            <button 
+              *ngIf="order.paymentStatus === 'shipped'"
+              class="action-btn track-btn" 
+              (click)="trackOrder(order._id)"
+              title="Rastrear pedido">
+              📦 Rastrear
+            </button>
+            <!-- Botón de reseñar para órdenes completadas -->
+            <button 
+              *ngIf="order.paymentStatus === 'completed'"
+              class="action-btn review-btn" 
+              (click)="reviewOrder(order._id)"
+              title="Reseñar pedido">
+              ⭐ Reseñar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paginación (solo si hay muchos pedidos) -->
+    <div *ngIf="!loading && orders.length > 10" class="pagination">
+      <button class="page-btn">←</button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn">3</button>
+      <button class="page-btn">→</button>
+    </div>
+  </div>
+</div>
