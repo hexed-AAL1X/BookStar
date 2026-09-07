@@ -10,5 +10,5 @@ import { SnackbarComponent } from './shared/snackbar/snackbar.component';
   styleUrl: './app.css'
 })
 export class App {
-  protected title = 'bookstar-front';
+  protected title = 'BookStar';
 }
