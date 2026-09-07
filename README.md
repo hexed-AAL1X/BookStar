@@ -183,6 +183,32 @@ Contribuciones bienvenidas.
 4) Push (`git push origin feature/nueva-feature`)
 5) Pull Request
 
+<a id="top-contributors"></a>
+### Top contributors
+
+<div align="center">
+
+<table>
+  <tr>
+    <td align="center" width="160">
+      <a href="https://github.com/FabricioLop">
+        <img src="https://avatars.githubusercontent.com/u/149276282?v=4" width="88" height="88" alt="ShadowLopez" style="border-radius:50%;" /><br />
+        <b>ShadowLopez</b><br />
+        <sub>@FabricioLop</sub>
+      </a>
+    </td>
+    <td align="center" width="160">
+      <a href="https://github.com/ale00gallo">
+        <img src="https://avatars.githubusercontent.com/u/169861498?v=4" width="88" height="88" alt="ale00gallo" style="border-radius:50%;" /><br />
+        <b>ale00gallo</b><br />
+        <sub>@ale00gallo</sub>
+      </a>
+    </td>
+  </tr>
+</table>
+
+</div>
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <a id="contact"></a>***Contact***
