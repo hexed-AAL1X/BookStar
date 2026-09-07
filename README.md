@@ -43,7 +43,12 @@
     </li>
     <li><a href="#environments">Environments</a></li>
     <li><a href="#deployment">Deployment</a></li>
-    <li><a href="#contributing">Contributing</a></li>
+    <li>
+      <a href="#contributing">Contributing</a>
+      <ul>
+        <li><a href="#top-contributors">Top contributors</a></li>
+      </ul>
+    </li>
     <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
@@ -106,8 +111,8 @@ Incluye:
 1) Clonar el repositorio
 
 ```bash
-git clone https://github.com/hexed-AAL1X/BookStar-Front.git
-cd BookStar-Front
+git clone https://github.com/hexed-AAL1X/BookStar.git
+cd BookStar
 ```
 
 2) Instalar dependencias
@@ -158,17 +163,19 @@ En producción (`ng build`) se usa `enviroment.prod.ts` vía `fileReplacements` 
 <a id="deployment"></a>***Deployment***
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
-### Netlify (gratis)
+### Vercel (gratis)
 
 1) Edita `src/app/env/enviroment.prod.ts` con la URL real de tu API en Render
-2) Conecta el repo `BookStar-Front` en Netlify
+2) Conecta el repo [`hexed-AAL1X/BookStar`](https://github.com/hexed-AAL1X/BookStar) en Vercel
 
-Config (también en `netlify.toml`):
+Config (también en `vercel.json`):
 
 - Build command: `npm run build`
-- Publish directory: `dist/bookstar-front/browser`
+- Output directory: `dist/bookstar-front/browser`
 
-3) En el backend (Render), pon `FRONTEND_URL` con la URL de Netlify
+3) En el backend (Render), pon `FRONTEND_URL` con la URL de Vercel
+
+Repo backend: [`hexed-AAL1X/_BookStar_`](https://github.com/hexed-AAL1X/_BookStar_)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
